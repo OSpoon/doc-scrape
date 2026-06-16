@@ -178,7 +178,7 @@ export function useSelection(shadowRoot: ShadowRoot) {
           selector: getSelectionSummary(state.selectedItems),
           markdown: getCombinedMarkdown(state.selectedItems),
           filename,
-          previewOpen: false,
+          previewOpen: true,
           copyState: 'idle',
           downloadState: 'idle',
         })
@@ -310,7 +310,12 @@ export function useSelection(shadowRoot: ShadowRoot) {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key !== 'Escape')
         return
-      exitSelection()
+      if (uiRef.current.mode === 'selected') {
+        resetSelectionForAnotherPick()
+      }
+      else {
+        exitSelection()
+      }
     }
 
     controllerRef.current = {

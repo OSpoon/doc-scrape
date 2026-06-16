@@ -14,7 +14,6 @@ export function ConfirmBar(props: {
   onClose: () => void
   onCopy: () => void
   onDownload: () => void
-  onReselect: () => void
   onTogglePreview: () => void
 }) {
   const copyText = props.copyState === 'copied'
@@ -23,8 +22,10 @@ export function ConfirmBar(props: {
   const markdownSize = `${props.markdown.length} 字符`
   const previewText = props.previewOpen ? '收起预览' : '预览'
   const title = props.count > 1 ? `已转换 ${props.count} 项` : '已转换'
-  const [renderedView, setRenderedView] = useState(false)
+  const [renderedView, setRenderedView] = useState(true)
   const renderedHtml = useMemo(() => marked.parse(props.markdown) as string, [props.markdown])
+
+  const tips = '重新选择请按ESC键'
 
   function getDownloadText() {
     if (props.downloadState === 'saving')
@@ -43,10 +44,15 @@ export function ConfirmBar(props: {
           <div className="docscrape-preview">
             <div className="docscrape-preview-header">
               <span className="docscrape-preview-title">{props.filename}</span>
-              <span className="docscrape-preview-count">{markdownSize}</span>
-              <button className="docscrape-preview-toggle" type="button" onClick={() => setRenderedView(v => !v)}>
-                {renderedView ? '源码' : '渲染'}
-              </button>
+              <div className="docscrape-preview-header-actions">
+                <span className="docscrape-preview-count">{markdownSize}</span>
+                <button className="docscrape-preview-copy" type="button" onClick={props.onCopy}>
+                  {copyText}
+                </button>
+                <button className="docscrape-preview-toggle" type="button" onClick={() => setRenderedView(v => !v)}>
+                  {renderedView ? '源码' : '渲染'}
+                </button>
+              </div>
             </div>
             {renderedView
               ? (
@@ -64,12 +70,12 @@ export function ConfirmBar(props: {
               <span className="docscrape-dialog-icon">✓</span>
               <span className="docscrape-dialog-title">{title}</span>
               <code className="docscrape-dialog-selector">{props.selector}</code>
-              <span className="docscrape-dialog-filename">{props.filename}</span>
+            </div>
+            <div className="docscrape-dialog-tips">
+              Tips：
+              {tips}
             </div>
             <div className="docscrape-dialog-actions-primary">
-              <button className="docscrape-primary" type="button" onClick={props.onDownload} disabled={props.downloadState === 'saving'}>
-                {getDownloadText()}
-              </button>
               <button className="docscrape-close" type="button" aria-label="退出" onClick={props.onClose}>
                 ×
               </button>
@@ -79,14 +85,11 @@ export function ConfirmBar(props: {
             <button className="docscrape-secondary" type="button" onClick={props.onTogglePreview}>
               {previewText}
             </button>
-            <button className="docscrape-secondary" type="button" onClick={props.onCopy}>
-              {copyText}
-            </button>
             <button className="docscrape-secondary" type="button" onClick={props.onAddMore}>
               继续添加
             </button>
-            <button className="docscrape-secondary" type="button" onClick={props.onReselect}>
-              重新选择
+            <button className="docscrape-primary" type="button" onClick={props.onDownload} disabled={props.downloadState === 'saving'}>
+              {getDownloadText()}
             </button>
           </div>
         </div>

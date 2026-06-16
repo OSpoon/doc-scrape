@@ -23,7 +23,6 @@ export default function ContentApp({ shadowRoot }: { shadowRoot: ShadowRoot }) {
           onClose={() => controllerRef.current?.exitSelection()}
           onCopy={() => controllerRef.current?.copySelected()}
           onDownload={() => controllerRef.current?.downloadSelected()}
-          onReselect={() => controllerRef.current?.resetSelectionForAnotherPick()}
           onTogglePreview={() => controllerRef.current?.togglePreview()}
         />
       )}
