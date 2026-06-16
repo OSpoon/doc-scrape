@@ -23,6 +23,16 @@ export interface SelectionHighlight {
   overlay: HTMLDivElement
 }
 
+export interface HighlightOps {
+  createHighlightOverlay: () => void
+  updateHighlight: (el: Element, isSelected: boolean) => void
+  createSelectedOverlay: (el: Element) => void
+  updateSelectedOverlays: () => void
+  clearSelectedOverlays: () => void
+  hideHighlight: () => void
+  showError: (message: string) => void
+}
+
 export type MessageListener = (
   message: unknown,
   sender: unknown,
@@ -54,6 +64,7 @@ export interface SelectionState {
   turndown: TurndownService | null
   messageListener: MessageListener | null
   config: DocScrapeConfig | null
+  highlightOps: HighlightOps | null
 }
 
 export interface SelectionController {

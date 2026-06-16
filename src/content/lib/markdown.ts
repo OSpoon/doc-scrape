@@ -19,7 +19,7 @@ function getTurndown(state: SelectionState, config?: MarkdownConfig) {
   return state.turndown
 }
 
-function sanitizeFilename(title: string) {
+export function sanitizeFilename(title: string) {
   return title
     .replace(/[<>:"/\\|?*]/g, '_')
     .replace(/\s+/g, '_')
@@ -88,7 +88,7 @@ function removeNonContentNodes(root: ParentNode) {
     el.remove()
 }
 
-function normalizeHtmlForMarkdown(html: string) {
+export function normalizeHtmlForMarkdown(html: string) {
   const template = document.createElement('template')
   template.innerHTML = html
   const baseUrl = document.baseURI || window.location.href

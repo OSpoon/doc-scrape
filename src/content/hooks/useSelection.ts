@@ -1,9 +1,10 @@
 import type { RuntimeMessage, SelectionController, SelectionItem, SelectionState, UiState } from '../types'
 import { useEffect, useRef, useState } from 'react'
-import { getConfig } from '../../lib/config'
 import { generateSelector, isDocScrapeUiElement, markUiElement } from '../lib/dom'
 import { createMarkdownPayload, embedImagesAsBase64 } from '../lib/markdown'
 import { addRuntimeMessageListener, removeRuntimeMessageListener, sendRuntimeMessage } from '../lib/runtime'
+import { useConfig } from './useConfig'
+import { useHighlight } from './useHighlight'
 
 export function useSelection(shadowRoot: ShadowRoot) {
   const [ui, setUi] = useState<UiState>({ mode: 'hidden' })
@@ -20,114 +21,32 @@ export function useSelection(shadowRoot: ShadowRoot) {
     turndown: null,
     messageListener: null,
     config: null,
+    highlightOps: null,
   })
 
   uiRef.current = ui
+
+  // Delegate config loading + storage-change listening
+  useConfig(stateRef)
+
+  // Delegate highlight / selected overlays / error toast
+  useHighlight(shadowRoot, stateRef)
 
   useEffect(() => {
     const state = stateRef.current
     const errorTimeoutIds: ReturnType<typeof setTimeout>[] = []
 
-    function loadConfig() {
-      return getConfig().then((config) => {
-        state.config = config
-        state.turndown = null
-      })
-    }
-
-    function handleStorageChange(changes: Record<string, chrome.storage.StorageChange>) {
-      if (changes.docscrape_config)
-        void loadConfig()
-    }
-
-    void loadConfig()
-    chrome.storage.onChanged.addListener(handleStorageChange)
-
-    function createHighlightOverlay() {
-      if (state.highlight)
-        return
-      const el = markUiElement(document.createElement('div')) as HTMLDivElement
-      el.style.cssText = 'position:fixed;pointer-events:none;z-index:2147483646;display:none;'
-      shadowRoot.appendChild(el)
-      state.highlight = el
-    }
-
-    function updateHighlight(el: Element, isSelected: boolean) {
-      const hl = state.highlight
-      if (!hl)
-        return
-      const rect = el.getBoundingClientRect()
-      const border = isSelected ? '2px solid #2563eb' : '2px dashed #2563eb'
-      const shadow = isSelected
-        ? '0 0 0 1px rgba(255,255,255,0.9) inset,0 0 0 4px rgba(37,99,235,0.12)'
-        : '0 0 0 1px rgba(255,255,255,0.88) inset'
-      hl.style.cssText
-        = `position:fixed;pointer-events:none;z-index:2147483646;`
-          + `top:${rect.top}px;left:${rect.left}px;`
-          + `width:${rect.width}px;height:${rect.height}px;`
-          + `border:${border};border-radius:8px;box-sizing:border-box;`
-          + `box-shadow:${shadow};background:rgba(37,99,235,0.05);display:block;`
-    }
-
-    function updateSelectedOverlay(overlay: HTMLDivElement, el: Element) {
-      const rect = el.getBoundingClientRect()
-      overlay.style.cssText
-        = `position:fixed;pointer-events:none;z-index:2147483645;`
-          + `top:${rect.top}px;left:${rect.left}px;`
-          + `width:${rect.width}px;height:${rect.height}px;`
-          + `border:2px solid rgba(37,99,235,0.72);border-radius:8px;box-sizing:border-box;`
-          + `box-shadow:0 0 0 4px rgba(37,99,235,0.1);background:rgba(37,99,235,0.04);`
-    }
-
-    function createSelectedOverlay(el: Element) {
-      const overlay = markUiElement(document.createElement('div')) as HTMLDivElement
-      updateSelectedOverlay(overlay, el)
-      shadowRoot.appendChild(overlay)
-      state.selectedHighlights.push({ element: el, overlay })
-    }
-
-    function updateSelectedOverlays() {
-      for (const item of state.selectedHighlights)
-        updateSelectedOverlay(item.overlay, item.element)
-    }
-
-    function clearSelectedOverlays() {
-      for (const item of state.selectedHighlights)
-        item.overlay.remove()
-      state.selectedHighlights = []
-    }
-
-    function hideHighlight() {
-      if (state.highlight)
-        state.highlight.style.display = 'none'
-    }
-
-    function showError(message: string) {
-      const msg = markUiElement(document.createElement('div'))
-      msg.style.cssText
-        = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);'
-          + 'z-index:2147483647;background:#991b1b;color:#fff;'
-          + 'padding:10px 16px;border-radius:999px;'
-          + 'font:700 14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;'
-          + 'box-shadow:0 18px 42px rgba(127,29,29,0.25);'
-          + 'pointer-events:auto;'
-      msg.textContent = `Error: ${message}`
-      shadowRoot.appendChild(msg)
-      const timeoutId = setTimeout(() => msg.remove(), 4000)
-      errorTimeoutIds.push(timeoutId)
-    }
-
     function clearSelectionState() {
       state.selectedElement = null
       state.selectedItems = []
       state.hoveredElement = null
-      clearSelectedOverlays()
+      state.highlightOps?.clearSelectedOverlays()
     }
 
     function showPickingState() {
       clearSelectionState()
-      createHighlightOverlay()
-      hideHighlight()
+      state.highlightOps?.createHighlightOverlay()
+      state.highlightOps?.hideHighlight()
       setUi({ mode: 'picking', count: 0 })
       document.body.style.cursor = 'crosshair'
     }
@@ -137,7 +56,7 @@ export function useSelection(shadowRoot: ShadowRoot) {
       state.pointerListenersActive = false
       clearSelectionState()
       document.body.style.cursor = ''
-      hideHighlight()
+      state.highlightOps?.hideHighlight()
       setUi({ mode: 'hidden' })
     }
 
@@ -154,8 +73,8 @@ export function useSelection(shadowRoot: ShadowRoot) {
       state.pointerListenersActive = true
       state.selectedElement = null
       state.hoveredElement = null
-      createHighlightOverlay()
-      hideHighlight()
+      state.highlightOps?.createHighlightOverlay()
+      state.highlightOps?.hideHighlight()
       setUi({ mode: 'picking', count: state.selectedItems.length })
       document.body.style.cursor = 'crosshair'
     }
@@ -189,8 +108,8 @@ export function useSelection(shadowRoot: ShadowRoot) {
         }
         state.selectedItems = [...state.selectedItems, item]
         state.selectedElement = el
-        createSelectedOverlay(el)
-        hideHighlight()
+        state.highlightOps?.createSelectedOverlay(el)
+        state.highlightOps?.hideHighlight()
         state.pointerListenersActive = false
         setUi({
           mode: 'selected',
@@ -204,7 +123,7 @@ export function useSelection(shadowRoot: ShadowRoot) {
         })
       }
       catch (e) {
-        showError(e instanceof Error ? e.message : String(e))
+        state.highlightOps?.showError(e instanceof Error ? e.message : String(e))
       }
     }
 
@@ -304,14 +223,14 @@ export function useSelection(shadowRoot: ShadowRoot) {
         return
       if (el !== state.hoveredElement) {
         state.hoveredElement = el
-        updateHighlight(el, false)
+        state.highlightOps?.updateHighlight(el, false)
       }
     }
 
     function handleScroll() {
-      updateSelectedOverlays()
+      state.highlightOps?.updateSelectedOverlays()
       if (state.selectionEnabled && state.pointerListenersActive) {
-        hideHighlight()
+        state.highlightOps?.hideHighlight()
         state.hoveredElement = null
       }
     }
@@ -368,7 +287,6 @@ export function useSelection(shadowRoot: ShadowRoot) {
       }
     }
 
-    createHighlightOverlay()
     addRuntimeMessageListener(state.messageListener)
 
     document.addEventListener('mousemove', handleMouseMove, true)
@@ -390,17 +308,12 @@ export function useSelection(shadowRoot: ShadowRoot) {
       state.pointerListenersActive = false
       clearSelectionState()
       document.body.style.cursor = ''
-      hideHighlight()
+      state.highlightOps?.hideHighlight()
       setUi({ mode: 'hidden' })
-      if (state.highlight) {
-        state.highlight.remove()
-        state.highlight = null
-      }
       if (state.messageListener) {
         removeRuntimeMessageListener(state.messageListener)
         state.messageListener = null
       }
-      chrome.storage.onChanged.removeListener(handleStorageChange)
     }
   }, [shadowRoot])
 
