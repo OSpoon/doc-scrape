@@ -2,6 +2,7 @@ import type { DocScrapeConfig } from '../lib/config'
 import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { defaultConfig, getConfig, saveConfig } from '../lib/config'
+import { clampImageConcurrency, normalizeMediaDirectory } from '../lib/media-package'
 
 const iconUrl = browser.runtime.getURL('icons/icon.png')
 
@@ -28,7 +29,11 @@ function OptionsPage() {
     if (!config)
       return
     setSaving(true)
-    await saveConfig(config)
+    await saveConfig({
+      ...config,
+      mediaDirectory: normalizeMediaDirectory(config.mediaDirectory),
+      imageConcurrency: clampImageConcurrency(config.imageConcurrency),
+    })
     setSaving(false)
     setSaved(true)
     setTimeout(setSaved, 2000, false)
@@ -84,6 +89,49 @@ function OptionsPage() {
           </div>
         )}
 
+      </section>
+
+      <section className="options-section">
+        <h2>实验功能</h2>
+        <div className="options-field options-field-row">
+          <input
+            id="packageImages"
+            type="checkbox"
+            checked={config.packageImages}
+            onChange={e => update('packageImages', e.target.checked)}
+          />
+          <label htmlFor="packageImages">下载时将 Markdown 与图片打包为 zip</label>
+        </div>
+
+        {config.packageImages && (
+          <>
+            <div className="options-field">
+              <label htmlFor="mediaDirectory">媒体文件目录</label>
+              <input
+                id="mediaDirectory"
+                type="text"
+                value={config.mediaDirectory}
+                onChange={e => update('mediaDirectory', e.target.value)}
+                onBlur={() => update('mediaDirectory', normalizeMediaDirectory(config.mediaDirectory))}
+              />
+              <span className="options-hint">图片会保存到 zip 中的此目录，并在 Markdown 中改写为相对路径。</span>
+            </div>
+
+            <div className="options-field">
+              <label htmlFor="imageConcurrency">图片下载并发数</label>
+              <input
+                id="imageConcurrency"
+                type="number"
+                min="1"
+                max="8"
+                step="1"
+                value={config.imageConcurrency}
+                onChange={e => update('imageConcurrency', clampImageConcurrency(Number(e.target.value)))}
+              />
+              <span className="options-hint">建议 2-4。失败的图片会保留原始 URL，不影响 Markdown 导出。</span>
+            </div>
+          </>
+        )}
       </section>
 
       <section className="options-section">

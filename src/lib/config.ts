@@ -5,6 +5,12 @@ export interface DocScrapeConfig {
   frontmatterTemplate: string
   /** 文件名模板，支持 {{title}} {{date}} {{selector}} */
   filenameTemplate: string
+  /** 实验功能：下载 Markdown 时同时打包远程图片 */
+  packageImages: boolean
+  /** 图片在 zip 中保存的目录 */
+  mediaDirectory: string
+  /** 图片下载并发数 */
+  imageConcurrency: number
   /** Markdown 标题风格 */
   headingStyle: 'atx' | 'setext'
   /** 代码块风格 */
@@ -15,6 +21,9 @@ export const defaultConfig: DocScrapeConfig = {
   includeFrontmatter: true,
   frontmatterTemplate: '---\ntitle: {{title}}\nurl: {{url}}\ndate: {{date}}\n---\n\n',
   filenameTemplate: '{{title}}.md',
+  packageImages: false,
+  mediaDirectory: 'media',
+  imageConcurrency: 3,
   headingStyle: 'atx',
   codeBlockStyle: 'fenced',
 }

@@ -134,6 +134,7 @@ textarea:focus-visible {
 
 .options-field input[type="text"],
 .options-field input[type="password"],
+.options-field input[type="number"],
 .options-field select,
 .options-field textarea {
   width: 100%;
@@ -148,6 +149,7 @@ textarea:focus-visible {
 
 .options-field input[type="text"]:focus,
 .options-field input[type="password"]:focus,
+.options-field input[type="number"]:focus,
 .options-field select:focus,
 .options-field textarea:focus {
   border-color: var(--docscrape-border-focus);

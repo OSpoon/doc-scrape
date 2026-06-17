@@ -9,7 +9,14 @@ export interface MarkdownConfig {
 export type RuntimeMessage
   = | { type: 'enable-selection' }
     | { type: 'convert-page' }
-    | { type: 'download', content: string, filename: string }
+    | {
+      type: 'download'
+      content: string
+      filename: string
+      packageImages?: boolean
+      mediaDirectory?: string
+      imageConcurrency?: number
+    }
 
 export interface SelectionItem {
   element: Element
@@ -35,7 +42,14 @@ export interface HighlightOps {
 export type MessageListener = (
   message: unknown,
   sender: unknown,
-  sendResponse: (response: { markdown?: string, filename?: string, error?: string }) => void,
+  sendResponse: (response: {
+    markdown?: string
+    filename?: string
+    packageImages?: boolean
+    mediaDirectory?: string
+    imageConcurrency?: number
+    error?: string
+  }) => void,
 ) => true | void
 
 export type UiState

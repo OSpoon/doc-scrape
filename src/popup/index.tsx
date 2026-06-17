@@ -37,9 +37,23 @@ function Popup() {
     setSaving(true)
     setStatus('idle')
     try {
-      const resp = await sendToTab({ type: 'convert-page' }) as { markdown?: string, filename?: string, error?: string }
+      const resp = await sendToTab({ type: 'convert-page' }) as {
+        markdown?: string
+        filename?: string
+        packageImages?: boolean
+        mediaDirectory?: string
+        imageConcurrency?: number
+        error?: string
+      }
       if (resp?.markdown) {
-        await browser.runtime.sendMessage({ type: 'download', content: resp.markdown, filename: resp.filename || 'page.md' })
+        await browser.runtime.sendMessage({
+          type: 'download',
+          content: resp.markdown,
+          filename: resp.filename || 'page.md',
+          packageImages: resp.packageImages,
+          mediaDirectory: resp.mediaDirectory,
+          imageConcurrency: resp.imageConcurrency,
+        })
         setStatus('done')
         setTimeout(() => window.close(), 800)
       }

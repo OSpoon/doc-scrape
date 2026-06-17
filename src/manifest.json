@@ -18,6 +18,9 @@
     "contextMenus",
     "storage"
   ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "chromium:service_worker": "background.ts",
     "firefox:scripts": ["background.ts"]

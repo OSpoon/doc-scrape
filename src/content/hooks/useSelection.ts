@@ -170,7 +170,14 @@ export function useSelection(shadowRoot: ShadowRoot) {
       if (current.mode !== 'selected' || current.downloadState === 'saving')
         return
       setUi({ ...current, downloadState: 'saving' })
-      sendRuntimeMessage({ type: 'download', content: current.markdown, filename: current.filename })
+      sendRuntimeMessage({
+        type: 'download',
+        content: current.markdown,
+        filename: current.filename,
+        packageImages: state.config?.packageImages,
+        mediaDirectory: state.config?.mediaDirectory,
+        imageConcurrency: state.config?.imageConcurrency,
+      })
         .then(() => {
           if (uiRef.current.mode !== 'selected')
             return
@@ -273,7 +280,13 @@ export function useSelection(shadowRoot: ShadowRoot) {
         void (async () => {
           try {
             const { markdown, filename } = createMarkdownPayload(state, document.body.innerHTML, 'body')
-            sendResponse({ markdown, filename })
+            sendResponse({
+              markdown,
+              filename,
+              packageImages: state.config?.packageImages,
+              mediaDirectory: state.config?.mediaDirectory,
+              imageConcurrency: state.config?.imageConcurrency,
+            })
           }
           catch (e) {
             sendResponse({ error: e instanceof Error ? e.message : String(e) })
