@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { markUiElement } from '../../../src/content/lib/dom'
 import { createMarkdownPayload, normalizeHtmlForMarkdown, sanitizeFilename } from '../../../src/content/lib/markdown'
+import { defaultConfig } from '../../../src/lib/config'
 
 describe('sanitizeFilename', () => {
   it('replaces angle brackets with underscores', () => {
@@ -145,8 +146,7 @@ describe('createMarkdownPayload', () => {
         packageImages: false,
         mediaDirectory: 'media',
         imageConcurrency: 3,
-        headingStyle: 'atx' as const,
-        codeBlockStyle: 'fenced' as const,
+        profiles: defaultConfig.profiles,
       },
     }
     const { markdown } = createMarkdownPayload(state, '<p>text</p>', 'p')
@@ -164,8 +164,7 @@ describe('createMarkdownPayload', () => {
         packageImages: false,
         mediaDirectory: 'media',
         imageConcurrency: 3,
-        headingStyle: 'atx' as const,
-        codeBlockStyle: 'fenced' as const,
+        profiles: defaultConfig.profiles,
       },
     }
     const { markdown } = createMarkdownPayload(state, '<p>text</p>', 'p')

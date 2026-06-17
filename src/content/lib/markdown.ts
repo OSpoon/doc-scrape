@@ -1,17 +1,24 @@
-import type { MarkdownConfig, SelectionState } from '../types'
+import type { MarkdownProfile } from '../../lib/config'
+import type { SelectionState } from '../types'
 import TurndownService from 'turndown'
 import { gfm } from 'turndown-plugin-gfm'
-import { applyTemplate } from '../../lib/config'
+import { applyTemplate, resolveMarkdownProfile } from '../../lib/config'
 import { uiMarker } from '../constants'
 
-function getTurndown(state: SelectionState, config?: MarkdownConfig) {
+function getTurndown(state: SelectionState, profile: MarkdownProfile) {
   if (!state.turndown) {
     state.turndown = new TurndownService({
-      headingStyle: config?.headingStyle || 'atx',
-      codeBlockStyle: config?.codeBlockStyle || 'fenced',
-      emDelimiter: '*',
-      strongDelimiter: '**',
-      bulletListMarker: '-',
+      headingStyle: profile.headingStyle,
+      hr: profile.hr,
+      br: profile.br,
+      bulletListMarker: profile.bulletListMarker,
+      codeBlockStyle: profile.codeBlockStyle,
+      emDelimiter: profile.emDelimiter,
+      fence: profile.fence,
+      strongDelimiter: profile.strongDelimiter,
+      linkStyle: profile.linkStyle,
+      linkReferenceStyle: profile.linkReferenceStyle,
+      preformattedCode: profile.preformattedCode,
     })
     state.turndown.use(gfm)
   }
@@ -102,11 +109,9 @@ export function createMarkdownPayload(
   selector = 'body',
 ) {
   const config = state.config
-  const markdownConfig: MarkdownConfig | undefined = config
-    ? { headingStyle: config.headingStyle, codeBlockStyle: config.codeBlockStyle }
-    : undefined
+  const profile = resolveMarkdownProfile(config, window.location.href)
 
-  let markdown = getTurndown(state, markdownConfig).turndown(normalizeHtmlForMarkdown(html))
+  let markdown = getTurndown(state, profile).turndown(normalizeHtmlForMarkdown(html))
 
   if (config?.includeFrontmatter) {
     const frontmatter = applyTemplate(config.frontmatterTemplate, {

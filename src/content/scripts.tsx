@@ -9,12 +9,28 @@ import './styles.css'
  * Do not invoke it yourself.
  */
 export default function initial() {
+  let cleanup: (() => void) | null = null
+  let cancelled = false
+
+  const stopWaiting = whenDocumentElementReady(() => {
+    if (!cancelled)
+      cleanup = mount()
+  })
+
+  return () => {
+    cancelled = true
+    stopWaiting()
+    cleanup?.()
+  }
+}
+
+function mount() {
   const rootDiv = document.createElement('div')
   rootDiv.setAttribute('data-extension-root', 'true')
   rootDiv.setAttribute(uiMarker, '')
   rootDiv.style.cssText
     = 'position:fixed;inset:0;z-index:2147483647;pointer-events:none;overflow:visible;'
-  document.body.appendChild(rootDiv)
+  document.documentElement.appendChild(rootDiv)
 
   // Injecting content_scripts inside a shadow dom
   // prevents conflicts with the host page's styles.
@@ -37,6 +53,22 @@ export default function initial() {
     mountingPoint.unmount()
     rootDiv.remove()
   }
+}
+
+function whenDocumentElementReady(callback: () => void) {
+  if (document.documentElement) {
+    callback()
+    return () => {}
+  }
+
+  const observer = new MutationObserver(() => {
+    if (!document.documentElement)
+      return
+    observer.disconnect()
+    callback()
+  })
+  observer.observe(document, { childList: true, subtree: true })
+  return () => observer.disconnect()
 }
 
 async function fetchCSS() {

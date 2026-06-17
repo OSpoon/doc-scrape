@@ -44,6 +44,7 @@ export function useSelection(shadowRoot: ShadowRoot) {
     }
 
     function showPickingState() {
+      state.highlightOps?.ensureMounted()
       clearSelectionState()
       state.highlightOps?.createHighlightOverlay()
       state.highlightOps?.hideHighlight()
@@ -223,6 +224,7 @@ export function useSelection(shadowRoot: ShadowRoot) {
     function handleMouseMove(e: MouseEvent) {
       if (!state.selectionEnabled || !state.pointerListenersActive)
         return
+      state.highlightOps?.ensureMounted()
       const el = document.elementFromPoint(e.clientX, e.clientY)
       if (!el || isDocScrapeUiElement(el))
         return
@@ -243,6 +245,7 @@ export function useSelection(shadowRoot: ShadowRoot) {
     function handleClick(e: MouseEvent) {
       if (!state.selectionEnabled || !state.pointerListenersActive)
         return
+      state.highlightOps?.ensureMounted()
       const el = document.elementFromPoint(e.clientX, e.clientY)
       if (!el || isDocScrapeUiElement(el))
         return
@@ -275,6 +278,7 @@ export function useSelection(shadowRoot: ShadowRoot) {
       const msg = message as RuntimeMessage
       if (msg.type === 'enable-selection') {
         enableSelection()
+        sendResponse({ success: true })
       }
       else if (msg.type === 'convert-page') {
         void (async () => {

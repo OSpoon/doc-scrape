@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import { sendTabMessageWithRetry } from '../lib/tabs'
 
 type TabInfo = { id: number, title: string, url: string } | null
 const iconUrl = browser.runtime.getURL('icons/icon.png')
@@ -18,17 +19,23 @@ function Popup() {
     })
   }, [])
 
-  function sendToTab(message: unknown) {
+  async function sendToTab(message: unknown, retries = 12) {
     if (!tab)
       return Promise.reject(new Error('No active tab'))
-    return browser.tabs.sendMessage(tab.id, message)
+    return sendTabMessageWithRetry(tab.id, message, retries)
   }
 
-  function startSelection() {
+  async function startSelection() {
     if (!hasTab)
       return
-    sendToTab({ type: 'enable-selection' }).catch(() => {})
-    window.close()
+    setStatus('idle')
+    try {
+      await sendToTab({ type: 'enable-selection' })
+      window.close()
+    }
+    catch {
+      setStatus('error')
+    }
   }
 
   async function convertPage() {

@@ -10,6 +10,7 @@
   --docscrape-text: #111827;
   --docscrape-text-secondary: #475569;
   --docscrape-text-muted: #64748b;
+  --docscrape-error: #991b1b;
   --docscrape-radius-lg: 14px;
   --docscrape-radius-md: 10px;
   --docscrape-radius-sm: 6px;
@@ -106,6 +107,18 @@ textarea:focus-visible {
   color: var(--docscrape-text);
 }
 
+.options-section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.options-section-title-row h2 {
+  margin-bottom: 0;
+}
+
 .options-field {
   margin-bottom: 16px;
 }
@@ -183,7 +196,8 @@ textarea:focus-visible {
 }
 
 .options-btn-primary,
-.options-btn-secondary {
+.options-btn-secondary,
+.options-btn-small {
   min-height: 38px;
   padding: 0 20px;
   border-radius: var(--docscrape-radius-pill);
@@ -218,9 +232,79 @@ textarea:focus-visible {
   border-color: #cbd5e1;
 }
 
-.options-btn-secondary:hover {
+.options-btn-secondary:hover,
+.options-btn-small:hover {
   background: #f8fafc;
   border-color: #94a3b8;
+}
+
+.options-btn-small {
+  min-height: 32px;
+  padding: 0 14px;
+  background: #fff;
+  color: var(--docscrape-primary);
+  border-color: var(--docscrape-primary-border);
+}
+
+.options-profiles {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.options-profile {
+  padding: 16px;
+  border: 1px solid var(--docscrape-border);
+  border-radius: var(--docscrape-radius-md);
+  background: #fff;
+}
+
+.options-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.options-profile-header strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--docscrape-text);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.options-profile-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.options-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--docscrape-primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.options-link:disabled {
+  color: var(--docscrape-text-muted);
+  cursor: not-allowed;
+}
+
+.options-link-danger {
+  color: var(--docscrape-error);
+}
+
+.options-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 12px;
 }
 
 .options-footer {
@@ -241,6 +325,16 @@ textarea:focus-visible {
 
   .options-actions {
     flex-direction: column;
+  }
+
+  .options-section-title-row,
+  .options-profile-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .options-profile-grid {
+    grid-template-columns: 1fr;
   }
 
   .options-btn-primary,

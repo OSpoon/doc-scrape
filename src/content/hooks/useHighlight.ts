@@ -15,7 +15,15 @@ export function useHighlight(
   useEffect(() => {
     const state = stateRef.current
 
+    function ensureMounted() {
+      const root = shadowRoot.host
+      if (root.isConnected)
+        return
+      document.documentElement.appendChild(root)
+    }
+
     function createHighlightOverlay() {
+      ensureMounted()
       if (state.highlight)
         return
       const el = markUiElement(document.createElement('div')) as HTMLDivElement
@@ -25,6 +33,7 @@ export function useHighlight(
     }
 
     function updateHighlight(el: Element, isSelected: boolean) {
+      ensureMounted()
       const hl = state.highlight
       if (!hl)
         return
@@ -42,6 +51,7 @@ export function useHighlight(
     }
 
     function updateSelectedOverlay(overlay: HTMLDivElement, el: Element) {
+      ensureMounted()
       const rect = el.getBoundingClientRect()
       overlay.style.cssText
         = `position:fixed;pointer-events:none;z-index:2147483645;`
@@ -77,6 +87,7 @@ export function useHighlight(
     const errorTimeoutIds: ReturnType<typeof setTimeout>[] = []
 
     function showError(message: string) {
+      ensureMounted()
       const msg = markUiElement(document.createElement('div'))
       msg.style.cssText
         = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);'
@@ -93,6 +104,7 @@ export function useHighlight(
 
     // Attach functions to state so useSelection can call them
     state.highlightOps = {
+      ensureMounted,
       createHighlightOverlay,
       updateHighlight,
       createSelectedOverlay,

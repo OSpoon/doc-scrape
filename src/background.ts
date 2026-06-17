@@ -1,4 +1,5 @@
 import { clampImageConcurrency, createMarkdownMediaPackage, normalizeMediaDirectory } from './lib/media-package'
+import { sendTabMessageWithRetry } from './lib/tabs'
 
 const menuItems = [
   {
@@ -33,10 +34,6 @@ createMenus()
 browser.runtime.onInstalled.addListener(createMenus)
 browser.runtime.onStartup.addListener(createMenus)
 
-function sendTabMessage(tabId: number, message: Record<string, unknown>) {
-  return browser.tabs.sendMessage(tabId, message)
-}
-
 browser.contextMenus.onClicked.addListener((info, tab) => {
   if (!tab?.id)
     return
@@ -46,10 +43,10 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     return
 
   if (item.type === 'enable-selection') {
-    sendTabMessage(tab.id, { type: item.type }).catch(() => {})
+    sendTabMessageWithRetry(tab.id, { type: item.type }).catch(() => {})
   }
   else if (item.type === 'convert-page') {
-    sendTabMessage(tab.id, { type: item.type })
+    sendTabMessageWithRetry(tab.id, { type: item.type })
       .then((resp: unknown) => {
         const response = resp as DownloadMessage | undefined
         if (response?.markdown) {

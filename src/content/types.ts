@@ -1,11 +1,6 @@
 import type TurndownService from 'turndown'
 import type { DocScrapeConfig } from '../lib/config'
 
-export interface MarkdownConfig {
-  headingStyle: 'atx' | 'setext'
-  codeBlockStyle: 'fenced' | 'indented'
-}
-
 export type RuntimeMessage
   = | { type: 'enable-selection' }
     | { type: 'convert-page' }
@@ -30,6 +25,7 @@ export interface SelectionHighlight {
 }
 
 export interface HighlightOps {
+  ensureMounted: () => void
   createHighlightOverlay: () => void
   updateHighlight: (el: Element, isSelected: boolean) => void
   createSelectedOverlay: (el: Element) => void
@@ -48,6 +44,7 @@ export type MessageListener = (
     packageImages?: boolean
     mediaDirectory?: string
     imageConcurrency?: number
+    success?: boolean
     error?: string
   }) => void,
 ) => true | void
