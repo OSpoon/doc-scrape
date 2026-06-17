@@ -141,7 +141,6 @@ describe('createMarkdownPayload', () => {
       config: {
         includeFrontmatter: true,
         frontmatterTemplate: '---\ntitle: {{title}}\n---\n\n',
-        downloadImages: false,
         filenameTemplate: '{{title}}.md',
         headingStyle: 'atx' as const,
         codeBlockStyle: 'fenced' as const,
@@ -158,7 +157,6 @@ describe('createMarkdownPayload', () => {
       config: {
         includeFrontmatter: false,
         frontmatterTemplate: '',
-        downloadImages: false,
         filenameTemplate: '{{title}}.md',
         headingStyle: 'atx' as const,
         codeBlockStyle: 'fenced' as const,

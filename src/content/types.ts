@@ -10,7 +10,6 @@ export type RuntimeMessage
   = | { type: 'enable-selection' }
     | { type: 'convert-page' }
     | { type: 'download', content: string, filename: string }
-    | { type: 'fetch-image', url: string }
 
 export interface SelectionItem {
   element: Element

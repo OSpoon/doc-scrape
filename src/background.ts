@@ -77,31 +77,11 @@ function doDownload(content: string, filename: string): Promise<void> {
 }
 
 browser.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
-  const msg = message as { type?: string, content?: string, filename?: string, url?: string }
+  const msg = message as { type?: string, content?: string, filename?: string }
   if (msg?.type === 'download') {
     doDownload(msg.content || '', msg.filename || '')
       .then(() => sendResponse({ success: true }))
       .catch((err: Error) => sendResponse({ error: err.message }))
   }
-  if (msg?.type === 'fetch-image') {
-    fetchImageAsDataUrl(msg.url || '')
-      .then(dataUrl => sendResponse({ dataUrl }))
-      .catch((err: Error) => sendResponse({ error: err.message }))
-  }
   return true
 })
-
-function fetchImageAsDataUrl(url: string): Promise<string> {
-  return fetch(url)
-    .then((response) => {
-      if (!response.ok)
-        throw new Error(`HTTP ${response.status}`)
-      return response.blob()
-    })
-    .then(blob => new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onloadend = () => resolve(reader.result as string)
-      reader.onerror = () => reject(new Error('Failed to read image blob'))
-      reader.readAsDataURL(blob)
-    }))
-}

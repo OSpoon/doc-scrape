@@ -3,8 +3,6 @@ export interface DocScrapeConfig {
   includeFrontmatter: boolean
   /** frontmatter 字段模板 */
   frontmatterTemplate: string
-  /** 是否下载图片为本地资源 */
-  downloadImages: boolean
   /** 文件名模板，支持 {{title}} {{date}} {{selector}} */
   filenameTemplate: string
   /** Markdown 标题风格 */
@@ -16,7 +14,6 @@ export interface DocScrapeConfig {
 export const defaultConfig: DocScrapeConfig = {
   includeFrontmatter: true,
   frontmatterTemplate: '---\ntitle: {{title}}\nurl: {{url}}\ndate: {{date}}\n---\n\n',
-  downloadImages: false,
   filenameTemplate: '{{title}}.md',
   headingStyle: 'atx',
   codeBlockStyle: 'fenced',

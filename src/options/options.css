@@ -1,12 +1,12 @@
 :root {
-  --docscrape-primary: #2563eb;
-  --docscrape-primary-hover: #1d4ed8;
-  --docscrape-primary-light: #eef4ff;
-  --docscrape-primary-border: #dbeafe;
+  --docscrape-primary: #e61f69;
+  --docscrape-primary-hover: #c91656;
+  --docscrape-primary-light: #fff0f6;
+  --docscrape-primary-border: #ffd6e7;
   --docscrape-bg: #f8fafc;
   --docscrape-surface: #fff;
   --docscrape-border: #e2e8f0;
-  --docscrape-border-focus: #93c5fd;
+  --docscrape-border-focus: #f9a8c8;
   --docscrape-text: #111827;
   --docscrape-text-secondary: #475569;
   --docscrape-text-muted: #64748b;
@@ -72,15 +72,10 @@ textarea:focus-visible {
 }
 
 .options-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: 32px;
   height: 32px;
-  border-radius: var(--docscrape-radius-pill);
-  background: var(--docscrape-primary);
-  color: #fff;
-  font: 700 16px/1 Arial, sans-serif;
+  border-radius: var(--docscrape-radius-md);
 }
 
 .options-header h1 {
@@ -156,7 +151,7 @@ textarea:focus-visible {
 .options-field select:focus,
 .options-field textarea:focus {
   border-color: var(--docscrape-border-focus);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 0 3px rgba(230, 31, 105, 0.08);
 }
 
 .options-field textarea {
@@ -201,12 +196,12 @@ textarea:focus-visible {
   background: var(--docscrape-primary);
   color: #fff;
   border-color: var(--docscrape-primary-hover);
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.22);
+  box-shadow: 0 6px 14px rgba(230, 31, 105, 0.22);
 }
 
 .options-btn-primary:hover {
   background: var(--docscrape-primary-hover);
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+  box-shadow: 0 8px 18px rgba(230, 31, 105, 0.28);
 }
 
 .options-btn-primary:disabled {

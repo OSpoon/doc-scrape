@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { defaultConfig, getConfig, saveConfig } from '../lib/config'
 
+const iconUrl = browser.runtime.getURL('icons/icon.png')
+
 function OptionsPage() {
   const [config, setConfig] = useState<DocScrapeConfig | null>(null)
   const [saved, setSaved] = useState(false)
@@ -41,7 +43,7 @@ function OptionsPage() {
     <div className="options-container">
       <header className="options-header">
         <div className="options-brand">
-          <span className="options-icon">✓</span>
+          <img className="options-icon" src={iconUrl} alt="" aria-hidden="true" />
           <h1>DocScrape 设置</h1>
         </div>
         <p className="options-desc">配置导出行为与 Markdown 格式</p>
@@ -82,15 +84,6 @@ function OptionsPage() {
           </div>
         )}
 
-        <div className="options-field options-field-row">
-          <input
-            id="downloadImages"
-            type="checkbox"
-            checked={config.downloadImages}
-            onChange={e => update('downloadImages', e.target.checked)}
-          />
-          <label htmlFor="downloadImages">将图片转为 Base64 嵌入 Markdown</label>
-        </div>
       </section>
 
       <section className="options-section">

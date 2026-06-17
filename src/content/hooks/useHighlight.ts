@@ -29,16 +29,16 @@ export function useHighlight(
       if (!hl)
         return
       const rect = el.getBoundingClientRect()
-      const border = isSelected ? '2px solid #2563eb' : '2px dashed #2563eb'
+      const border = isSelected ? '2px solid #e61f69' : '2px dashed #e61f69'
       const shadow = isSelected
-        ? '0 0 0 1px rgba(255,255,255,0.9) inset,0 0 0 4px rgba(37,99,235,0.12)'
+        ? '0 0 0 1px rgba(255,255,255,0.9) inset,0 0 0 4px rgba(230,31,105,0.12)'
         : '0 0 0 1px rgba(255,255,255,0.88) inset'
       hl.style.cssText
         = `position:fixed;pointer-events:none;z-index:2147483646;`
           + `top:${rect.top}px;left:${rect.left}px;`
           + `width:${rect.width}px;height:${rect.height}px;`
           + `border:${border};border-radius:8px;box-sizing:border-box;`
-          + `box-shadow:${shadow};background:rgba(37,99,235,0.05);display:block;`
+          + `box-shadow:${shadow};background:rgba(230,31,105,0.05);display:block;`
     }
 
     function updateSelectedOverlay(overlay: HTMLDivElement, el: Element) {
@@ -47,8 +47,8 @@ export function useHighlight(
         = `position:fixed;pointer-events:none;z-index:2147483645;`
           + `top:${rect.top}px;left:${rect.left}px;`
           + `width:${rect.width}px;height:${rect.height}px;`
-          + `border:2px solid rgba(37,99,235,0.72);border-radius:8px;box-sizing:border-box;`
-          + `box-shadow:0 0 0 4px rgba(37,99,235,0.1);background:rgba(37,99,235,0.04);`
+          + `border:2px solid rgba(230,31,105,0.72);border-radius:8px;box-sizing:border-box;`
+          + `box-shadow:0 0 0 4px rgba(230,31,105,0.1);background:rgba(230,31,105,0.04);`
     }
 
     function createSelectedOverlay(el: Element) {

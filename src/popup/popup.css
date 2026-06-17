@@ -1,0 +1,222 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --docscrape-primary: #e61f69;
+  --docscrape-primary-hover: #c91656;
+  --docscrape-primary-light: #fff0f6;
+  --docscrape-primary-border: #ffd6e7;
+  --docscrape-bg: #f8fafc;
+  --docscrape-surface: #fff;
+  --docscrape-border: #e2e8f0;
+  --docscrape-border-strong: #cbd5e1;
+  --docscrape-text: #111827;
+  --docscrape-text-secondary: #475569;
+  --docscrape-text-muted: #64748b;
+  --docscrape-error: #991b1b;
+  --docscrape-error-bg: #fef2f2;
+  --docscrape-error-border: #fecaca;
+  --docscrape-success: #166534;
+  --docscrape-success-bg: #f0fdf4;
+  --docscrape-success-border: #bbf7d0;
+  --docscrape-radius-sm: 6px;
+  --docscrape-radius-md: 10px;
+  --docscrape-radius-lg: 14px;
+  --docscrape-shadow: 0 12px 36px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04);
+  --docscrape-shadow-primary: 0 6px 14px rgba(230, 31, 105, 0.22);
+}
+
+body {
+  width: 320px;
+  margin: 0;
+  background: var(--docscrape-bg);
+  color: var(--docscrape-text);
+  font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--docscrape-primary);
+  outline-offset: 2px;
+}
+
+.popup-container {
+  padding: 14px;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.popup-brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 9px;
+}
+
+.popup-icon {
+  display: block;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--docscrape-radius-sm);
+}
+
+.popup-header h1 {
+  margin: 0;
+  color: var(--docscrape-text);
+  font-size: 15px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.popup-brand span:not(.popup-icon) {
+  display: block;
+  margin-top: 2px;
+  color: var(--docscrape-text-muted);
+  font-size: 11px;
+}
+
+.popup-settings {
+  flex: 0 0 auto;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--docscrape-border-strong);
+  border-radius: var(--docscrape-radius-sm);
+  background: var(--docscrape-surface);
+  color: var(--docscrape-text-secondary);
+  cursor: pointer;
+}
+
+.popup-settings:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.popup-page {
+  margin: 0 0 12px;
+  padding: 10px 11px;
+  border: 1px solid var(--docscrape-border);
+  border-radius: var(--docscrape-radius-md);
+  background: var(--docscrape-surface);
+  box-shadow: var(--docscrape-shadow);
+}
+
+.popup-page-label {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--docscrape-text-muted);
+  font-size: 11px;
+}
+
+.popup-page-title {
+  min-height: 19px;
+  margin: 0;
+  overflow: hidden;
+  color: var(--docscrape-text);
+  font-size: 13px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.popup-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.popup-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  min-height: 72px;
+  padding: 10px 11px;
+  border: 1px solid transparent;
+  border-radius: var(--docscrape-radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+}
+
+.popup-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.popup-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.popup-btn-primary {
+  border-color: var(--docscrape-primary-hover);
+  background: var(--docscrape-primary);
+  color: #fff;
+  box-shadow: var(--docscrape-shadow-primary);
+}
+
+.popup-btn-primary:hover:not(:disabled) {
+  background: var(--docscrape-primary-hover);
+}
+
+.popup-btn-secondary {
+  border-color: var(--docscrape-primary-border);
+  background: var(--docscrape-primary-light);
+  color: var(--docscrape-primary);
+}
+
+.popup-btn-secondary:hover:not(:disabled) {
+  border-color: #f9a8c8;
+  background: #ffe4ef;
+}
+
+.popup-btn-title,
+.popup-btn-subtitle {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.popup-btn-title {
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.popup-btn-subtitle {
+  margin-top: 4px;
+  color: currentColor;
+  font-size: 11px;
+  opacity: 0.72;
+}
+
+.popup-status {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-radius: var(--docscrape-radius-md);
+  font-size: 12px;
+}
+
+.popup-status-done {
+  border: 1px solid var(--docscrape-success-border);
+  background: var(--docscrape-success-bg);
+  color: var(--docscrape-success);
+}
+
+.popup-status-error {
+  border: 1px solid var(--docscrape-error-border);
+  background: var(--docscrape-error-bg);
+  color: var(--docscrape-error);
+}

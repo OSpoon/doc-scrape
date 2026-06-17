@@ -1,7 +1,7 @@
 import type { RuntimeMessage, SelectionController, SelectionItem, SelectionState, UiState } from '../types'
 import { useEffect, useRef, useState } from 'react'
 import { generateSelector, isDocScrapeUiElement, markUiElement } from '../lib/dom'
-import { createMarkdownPayload, embedImagesAsBase64 } from '../lib/markdown'
+import { createMarkdownPayload } from '../lib/markdown'
 import { addRuntimeMessageListener, removeRuntimeMessageListener, sendRuntimeMessage } from '../lib/runtime'
 import { useConfig } from './useConfig'
 import { useHighlight } from './useHighlight'
@@ -98,9 +98,7 @@ export function useSelection(shadowRoot: ShadowRoot) {
     async function setSelectedElement(el: Element) {
       try {
         const selector = generateSelector(el)
-        let { markdown, filename } = createMarkdownPayload(state, el.outerHTML, selector)
-        if (state.config?.downloadImages)
-          markdown = await embedImagesAsBase64(markdown)
+        const { markdown, filename } = createMarkdownPayload(state, el.outerHTML, selector)
         const item = {
           element: el,
           selector,
@@ -274,9 +272,7 @@ export function useSelection(shadowRoot: ShadowRoot) {
       else if (msg.type === 'convert-page') {
         void (async () => {
           try {
-            let { markdown, filename } = createMarkdownPayload(state, document.body.innerHTML, 'body')
-            if (state.config?.downloadImages)
-              markdown = await embedImagesAsBase64(markdown)
+            const { markdown, filename } = createMarkdownPayload(state, document.body.innerHTML, 'body')
             sendResponse({ markdown, filename })
           }
           catch (e) {
