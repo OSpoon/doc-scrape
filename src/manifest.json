@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/chrome-manifest.json",
   "chromium:manifest_version": 3,
   "firefox:manifest_version": 2,
-  "version": "1.0.9",
+  "version": "1.1.0",
   "name": "DocScrape - 网页内容转 Markdown",
   "description": "将网页内容整理为 Markdown，支持选取页面区域、整页导出、图片打包和 GitHub 发布。",
   "icons": {
